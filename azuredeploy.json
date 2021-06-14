@@ -305,11 +305,23 @@
                   "name":"[concat(parameters('vmName'),'-OSDisk')]",
                   "caching":"ReadWrite",
                   "createOption":"FromImage",
-                  "diskSizeGB":64,
+                  "diskSizeGB":32,
                   "vhd":{
                      "uri":"[concat(variables('storageContainerUri'), parameters('vmName'), '-OS.vhd')]"
                   }
-               }
+               },
+               "dataDisks": [
+                  {
+                     "lun": 0,
+                     "name":"[concat(parameters('vmName'),'-DD')]",
+                     "createOption":"Empty",
+                     "vhd":{
+                        "uri":"[concat(variables('storageContainerUri'), parameters('vmName'), '-DD.vhd')]"
+                     },
+                     "caching":"None",
+                     "diskSizeGB":32
+                  }
+                ]
             },
             "networkProfile":{
                "networkInterfaces":[
