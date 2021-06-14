@@ -44,6 +44,18 @@ function resizeDisk()
    sudo df -h /
 }
 
+#function to mount data disk
+function mountDataDisk()
+{
+   echo "Attempting to mount data disk"
+   # Assuming data disk will have disk with /dev/sdc
+   sudo parted /dev/sdc --script mklabel gpt mkpart xfspart xfs 0% 100%
+   sudo mkfs.xfs /dev/sdc1
+   sudo partprobe /dev/sdc1
+   sudo mkdir /u01
+   
+}
+
 #This function is to create swapfile required for WebLogic installation
 function createSwap()
 {
