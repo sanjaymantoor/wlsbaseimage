@@ -53,7 +53,20 @@ function mountDataDisk()
    sudo mkfs.xfs /dev/sdc1
    sudo partprobe /dev/sdc1
    sudo mkdir /u01
-   
+   mountString=`sudo blkid | grep sdc1 | cut -f2 -d":" | cut -f2 -d" "`
+   sudo echo "$mountString /u01   xfs   defaults,nofail   1   2" >> /etc/fstab
+   if [[ $? != 0 ]];
+   then
+      echo "data disk mount entry for /etc/fstab failed"
+      exit 1
+   fi
+   sudo mount /u01
+   sudo df -h /u01
+   if [[ $? != 0 ]];
+   then
+      echo "data disk /u01 mount failed"
+      exit 1
+   fi      
 }
 
 #This function is to create swapfile required for WebLogic installation
@@ -454,13 +467,16 @@ echo "Update RHEL VM"
 sudo yum -y update
 
 echo "Installing zip unzip wget vnc-server rng-tools cifs-utils"
-sudo yum install -y zip unzip wget vnc-server rng-tools cifs-utils cloud-utils-growpart gdisk psmisc
+sudo yum install -y zip unzip wget vnc-server rng-tools cifs-utils cloud-utils-growpart gdisk psmisc util-linux
 
 # Reszing the file system size
-resizeDisk
+#resizeDisk
 
 # Create swap file, which is required for WLS installation
-createSwap
+#createSwap
+
+#mount the data disk for JDK and WLS setup
+mountDataDisk
 
 #Setting up rngd utils
 sudo systemctl enable rngd 
