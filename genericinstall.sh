@@ -370,6 +370,9 @@ fi
 # This has to run first as data disk is mounted /u01 directory
 mountDataDisk
 
+# Create swap file, which is required for WLS installation
+createSwap
+
 export WLS_VER=$wlsversion
 export WEBLOGIC_DEPLOY_TOOL=https://github.com/oracle/weblogic-deploy-tooling/releases/download/weblogic-deploy-tooling-1.8.1/weblogic-deploy.zip
 export POSTGRESQL_JDBC_DRIVER_URL=https://jdbc.postgresql.org/download/postgresql-42.2.8.jar 
@@ -425,7 +428,6 @@ curl -s https://raw.githubusercontent.com/typekpb/oradown/master/oradown.sh  | b
 
 sudo chown -R $username:$groupname /u01/app
 
-
 sudo cp $BASE_DIR/fmw_*.zip $WLS_PATH/
 sudo cp $BASE_DIR/jdk-*.tar.gz $JDK_PATH/
 
@@ -475,9 +477,6 @@ sudo yum install -y zip unzip wget vnc-server rng-tools cifs-utils cloud-utils-g
 
 # Reszing the file system size
 #resizeDisk
-
-# Create swap file, which is required for WLS installation
-createSwap
 
 #Setting up rngd utils
 sudo systemctl enable rngd 
