@@ -27,7 +27,6 @@ function cleanup()
     rm -rf $WLS_PATH/silent-template
 
     rm -rf $WLS_JAR
-    rm -rf /var/lib/waagent/custom-script/download/*
     echo "Cleanup completed."
     
 }
