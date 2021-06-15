@@ -38,7 +38,7 @@ function resizeDisk()
    echo "Initial /dev/mapper/rootvg-rootlv size"
    sudo df -h /dev/mapper/rootvg-rootlv
    sudo growpart /dev/sda 4 --fudge 2048
-   sudo lvextend -An -L+6G --resizefs /dev/mapper/rootvg-rootlv
+   sudo lvextend -An -L+8G --resizefs /dev/mapper/rootvg-rootlv
    sudo pvresize /dev/sda4
    echo "After resizing /dev/mapper/rootvg-rootlv size"
    sudo df -h /
