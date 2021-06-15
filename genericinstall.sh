@@ -366,12 +366,17 @@ then
 	exit 1
 fi
 
+# Reszing the "/" file system size as it is having only 2GB space
+resizeDisk
+
 # mount the data disk for JDK and WLS setup
 # This has to run first as data disk is mounted /u01 directory
 mountDataDisk
 
 # Create swap file, which is required for WLS installation
 createSwap
+
+
 
 export WLS_VER=$wlsversion
 export WEBLOGIC_DEPLOY_TOOL=https://github.com/oracle/weblogic-deploy-tooling/releases/download/weblogic-deploy-tooling-1.8.1/weblogic-deploy.zip
@@ -474,9 +479,6 @@ sudo yum -y update
 
 echo "Installing zip unzip wget vnc-server rng-tools cifs-utils"
 sudo yum install -y zip unzip wget vnc-server rng-tools cifs-utils cloud-utils-growpart gdisk psmisc util-linux
-
-# Reszing the file system size
-#resizeDisk
 
 #Setting up rngd utils
 sudo systemctl enable rngd 
