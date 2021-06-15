@@ -35,6 +35,10 @@ function cleanup()
 # This function increases the disk size around 30 GB
 function resizeDisk()
 {
+
+   diskSize=`df -hP / | awk '{print $2}' |tail -1|sed 's/G//g'`
+   
+   
    echo "Resizing the /dev/mapper/rootvg-rootlv file system"
    echo "Initial /dev/mapper/rootvg-rootlv size"
    sudo df -h /dev/mapper/rootvg-rootlv
@@ -342,6 +346,8 @@ export jdkurl="$5"
 export wlsversion="$6"
 export jdkversion="$7"
 export linuxversion="$8"
+# Resize the disk if / disk space is less than rootDiskSizeLimit
+export rootDiskSizeLimit="6"
 
 if [ -z "$acceptOTNLicenseAgreement" ];
 then
@@ -368,7 +374,11 @@ then
 fi
 
 # Reszing the "/" file system size as it is having only 2GB space
-resizeDisk
+# if "/" file system disk is less than rootDiskSizeLimit then resize it
+diskSize=`df -hP / | awk '{print $2}' |tail -1|sed 's/G//g
+if [ "$diskSize" -gt "$rootDiskSizeLimit" ];then
+   resizeDisk
+fi
 
 # mount the data disk for JDK and WLS setup
 # This has to run first as data disk is mounted /u01 directory
