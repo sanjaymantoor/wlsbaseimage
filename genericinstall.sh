@@ -72,8 +72,8 @@ function mountDataDisk()
 #This function is to create swapfile required for WebLogic installation
 function createSwap()
 {
-   echo "Creating swapfile at /root/swapfile"
-   sudo dd if=/dev/zero of=/root/swapfile bs=2M count=1024
+   echo "Creating swapfile at /u01/swapfile"
+   sudo dd if=/dev/zero of=/u01/swapfile bs=2M count=1024
    sudo mkswap /u01/swapfile
    sudo swapon /u01/swapfile
    sudo chmod 0600 /u01/swapfile
