@@ -36,16 +36,16 @@ function cleanup()
 function resizeDisk()
 {
 
-   diskSize=`df -hP / | awk '{print $2}' |tail -1|sed 's/G//g'`
-   
-   
-   echo "Resizing the /dev/mapper/rootvg-rootlv file system"
-   echo "Initial /dev/mapper/rootvg-rootlv size"
-   sudo df -h /dev/mapper/rootvg-rootlv
-   sudo growpart /dev/sda 4
-   sudo lvextend -An -L+8G --resizefs /dev/mapper/rootvg-rootlv
-   sudo pvresize /dev/sda4
-   echo "After resizing /dev/mapper/rootvg-rootlv size"
+   logicalFileSystem=`df -hP / | awk '{print $1}' | tail -1`
+   echo "Resizing the $logicalFileSystem file system"
+   echo "Initial $logicalFileSystem size"
+   fileSystemNumber=${logicalFileSystem: -1}
+   fileSustemName=${logicalFileSystem::-1}
+   sudo df -h $logicalFileSystem
+   sudo growpart $fileSustemName $fileSystemNumber
+   sudo lvextend -An -L+8G --resizefs $logicalFileSystem
+   sudo pvresize $logicalFileSystem
+   echo "After resizing $logicalFileSystem size"
    sudo df -h /
 }
 
