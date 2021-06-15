@@ -366,6 +366,10 @@ then
 	exit 1
 fi
 
+# mount the data disk for JDK and WLS setup
+# This has to run first as data disk is mounted /u01 directory
+mountDataDisk
+
 export WLS_VER=$wlsversion
 export WEBLOGIC_DEPLOY_TOOL=https://github.com/oracle/weblogic-deploy-tooling/releases/download/weblogic-deploy-tooling-1.8.1/weblogic-deploy.zip
 export POSTGRESQL_JDBC_DRIVER_URL=https://jdbc.postgresql.org/download/postgresql-42.2.8.jar 
@@ -471,9 +475,6 @@ sudo yum install -y zip unzip wget vnc-server rng-tools cifs-utils cloud-utils-g
 
 # Reszing the file system size
 #resizeDisk
-
-#mount the data disk for JDK and WLS setup
-mountDataDisk
 
 # Create swap file, which is required for WLS installation
 createSwap
