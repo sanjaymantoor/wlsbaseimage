@@ -27,7 +27,9 @@ function cleanup()
     rm -rf $WLS_PATH/silent-template
 
     rm -rf $WLS_JAR
+    rm -rf /var/lib/waagent/custom-script/download/*
     echo "Cleanup completed."
+    
 }
 
 # RedHat root file system has of size 2GB which is less for WLS setup
