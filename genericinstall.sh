@@ -35,12 +35,18 @@ function cleanup()
 # This function increases the disk size around 30 GB
 function resizeDisk()
 {
-
-   logicalFileSystem=`df -hP / | awk '{print $1}' | tail -1`
+   if [ "$linuxversion" == "7.3" ]
+   then
+      logicalFileSystem=`df -hP / | awk '{print $1}' | tail -1`
+   else
+      logicalFileSystem=`pvscan | head -1 | awk '{print $2}'`
+   fi   
    echo "Resizing the $logicalFileSystem file system"
    echo "Initial $logicalFileSystem size"
    fileSystemNumber=${logicalFileSystem: -1}
-   fileSustemName=${logicalFileSystem::-1}
+   fileSystemName=${logicalFileSystem::-1}
+   echo "File system name : $fileSystemName"
+   echo "File system number : $fileSystemNumber"
    sudo df -h $logicalFileSystem
    sudo growpart $fileSustemName $fileSystemNumber
    sudo lvextend -An -L+8G --resizefs $logicalFileSystem
