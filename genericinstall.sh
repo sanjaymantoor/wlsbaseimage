@@ -37,22 +37,21 @@ function resizeDisk()
 {
    if [ "$linuxversion" == "7.3" ]
    then
-      logicalFileSystem=`df -hP / | awk '{print $1}' | tail -1`
+      partition=`df -hP / | awk '{print $1}' | tail -1`
+      volume=${partition}
    else
-      logicalFileSystem=`pvscan | head -1 | awk '{print $2}'`
+      partition=`pvscan | head -1 | awk '{print $2}'`
+      volume=`df -hP / | awk '{print $1}' | tail -1`
    fi   
-   echo "Resizing the $logicalFileSystem file system"
-   echo "Initial $logicalFileSystem size"
-   fileSystemNumber=${logicalFileSystem: -1}
-   fileSystemName=${logicalFileSystem::-1}
    echo "File system name : $fileSystemName"
    echo "File system number : $fileSystemNumber"
-   sudo df -h $logicalFileSystem
+   sudo df -h ${partition}
    sudo growpart $fileSustemName $fileSystemNumber
-   sudo lvextend -An -L+8G --resizefs $logicalFileSystem
-   sudo pvresize $logicalFileSystem
-   echo "After resizing $logicalFileSystem size"
-   sudo df -h /
+   sudo lsblk ${partition}
+   sudo lvextend -An -L+8G --resizefs $volume
+   sudo pvresize ${partition}
+   echo "After resizing $volume size"
+   sudo df -Th ${partition}
 }
 
 #function to mount data disk
