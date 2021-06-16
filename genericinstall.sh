@@ -376,6 +376,7 @@ fi
 # Reszing the "/" file system size as it is having only 2GB space
 # if "/" file system disk is less than rootDiskSizeLimit then resize it
 diskSize=`df -hP / | awk '{print $2}' |tail -1|sed 's/G//g'`
+diskSize=${diskSize%.*}
 #if [ "$diskSize" -lt "$rootDiskSizeLimit" ]; then
 #   echo "'/' file system has less space $diskSize GB , attempting for resizing"
 #   resizeDisk
