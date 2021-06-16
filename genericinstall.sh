@@ -43,15 +43,17 @@ function resizeDisk()
       partition=`pvscan | head -1 | awk '{print $2}'`
       volume=`df -hP / | awk '{print $1}' | tail -1`
    fi   
+   fileSystemNumber=${partition: -1}
+   fileSystemName=${partition::-1}
    echo "File system name : $fileSystemName"
    echo "File system number : $fileSystemNumber"
-   sudo df -h ${partition}
-   sudo growpart $fileSustemName $fileSystemNumber
+   sudo df -h ${volume}
+   sudo growpart $fileSystemName $fileSystemNumber
    sudo lsblk ${partition}
    sudo lvextend -An -L+8G --resizefs $volume
    sudo pvresize ${partition}
    echo "After resizing $volume size"
-   sudo df -Th ${partition}
+   sudo df -Th ${volume}
 }
 
 #function to mount data disk
