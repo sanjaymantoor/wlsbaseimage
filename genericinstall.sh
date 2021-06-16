@@ -377,10 +377,10 @@ fi
 # if "/" file system disk is less than rootDiskSizeLimit then resize it
 diskSize=`df -hP / | awk '{print $2}' |tail -1|sed 's/G//g'`
 diskSize=${diskSize%.*}
-#if [ "$diskSize" -lt "$rootDiskSizeLimit" ]; then
-#   echo "'/' file system has less space $diskSize GB , attempting for resizing"
-#   resizeDisk
-#fi
+if [ "$diskSize" -lt "$rootDiskSizeLimit" ]; then
+   echo "'/' file system has less space $diskSize GB , attempting for resizing"
+   resizeDisk
+fi
 
 # mount the data disk for JDK and WLS setup
 # This has to run first as data disk is mounted /u01 directory
