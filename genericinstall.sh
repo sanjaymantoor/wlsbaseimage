@@ -115,6 +115,8 @@ else
 swapon /mnt/swapfile; 
 fi
 EOF
+sudo chmod +x /var/lib/cloud/scripts/per-boot/create_swapfile.sh
+
 #   sudo dd if=/dev/zero of=/u01/swapfile bs=2M count=1024
 #   sudo mkswap /u01/swapfile
 #   sudo swapon /u01/swapfile
