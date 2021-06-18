@@ -89,9 +89,9 @@ function createSwap()
    sudo sed -i 's/ResourceDisk.MountPoint=\/mnt\/resource/ResourceDisk.MountPoint=\/mnt/g' /etc/waagent.conf
    sudo sed -i 's/ResourceDisk.Format=n/ResourceDisk.Format=y/g' /etc/waagent.conf
    sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
-   sudo systemctl restart waagent.service &
+   sudo systemctl restart waagent.service | true
    sleep 5s
-   sudo systemcl status waagent.service
+   sudo systemctl status waagent.service
    if [ -f /mnt/swapfile ]; then
       echo "Swap partiftion created at /mnt/swapfile"
    else
