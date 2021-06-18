@@ -89,7 +89,7 @@ function createSwap()
    sudo sed -i 's/ResourceDisk.MountPoint=\/mnt\/resource/ResourceDisk.MountPoint=\/mnt/g' /etc/waagent.conf
    sudo sed -i 's/ResourceDisk.Format=n/ResourceDisk.Format=y/g' /etc/waagent.conf
    sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
-   sudo systemctl restart waagent.service | true
+   sudo systemctl restart waagent.service | echo "Executing systemctl restart waagent.service"
    sleep 5s
    sudo systemctl status waagent.service
    if [ -f /mnt/swapfile ]; then
