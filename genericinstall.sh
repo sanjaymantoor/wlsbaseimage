@@ -84,13 +84,22 @@ function mountDataDisk()
 #This function is to create swapfile required for WebLogic installation
 function createSwap()
 {
-   echo "Creating swapfile at /u01/swapfile"
-   sudo dd if=/dev/zero of=/u01/swapfile bs=2M count=1024
-   sudo mkswap /u01/swapfile
-   sudo swapon /u01/swapfile
-   sudo chmod 0600 /u01/swapfile
-   echo "Make a entry in /etc/fstab for swapfile"
-   echo "/u01/swapfile swap swap defaults 0 0" >> /etc/fstab 
+   echo "Creating swapfile using waagent service"
+   sudo sed -i 's/ResourceDisk.Format=n/ResourceDisk.Format=y/g' /etc/waagent.conf
+   sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
+   sudo systemctl restart waagent.service
+   if [ -f /mnt/swapfile ]; then
+      echo "Swap partiftion created at /mnt/swapfile"
+   else
+      echo "Swap partition creation failed"
+      exit 1
+   fi
+#   sudo dd if=/dev/zero of=/u01/swapfile bs=2M count=1024
+#   sudo mkswap /u01/swapfile
+#   sudo swapon /u01/swapfile
+#   sudo chmod 0600 /u01/swapfile
+#   echo "Make a entry in /etc/fstab for swapfile"
+#   echo "/u01/swapfile swap swap defaults 0 0" >> /etc/fstab 
 }
 
 #download 3rd Party JDBC Drivers
@@ -391,7 +400,7 @@ fi
 
 # mount the data disk for JDK and WLS setup
 # This has to run first as data disk is mounted /u01 directory
-mountDataDisk
+#mountDataDisk
 
 # Create swap file, which is required for WLS installation
 createSwap
