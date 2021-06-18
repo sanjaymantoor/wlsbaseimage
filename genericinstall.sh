@@ -93,7 +93,8 @@ function createSwap()
    # Above command hangs and stops further execution, as a workaround using following
    sudo systemctl stop waagent.service
    sleep 5s
-   sudo /usr/bin/python -u /usr/sbin/waagent -daemon
+   sudo /usr/bin/python -u /usr/sbin/waagent -daemon &
+   sleep 5s
    if [ -f /mnt/swapfile ]; then
       echo "Swap partiftion created at /mnt/swapfile"
    else
