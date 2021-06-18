@@ -91,6 +91,8 @@ function createSwap()
    sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
    #sudo systemctl restart waagent.service | echo "Executing systemctl restart waagent.service"
    # Above command hangs and stops further execution, as a workaround using following
+   sudo systemctl stop waagent.service
+   sleep 5s
    sudo /usr/bin/python -u /usr/sbin/waagent -daemon
    if [ -f /mnt/swapfile ]; then
       echo "Swap partiftion created at /mnt/swapfile"
