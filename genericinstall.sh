@@ -89,10 +89,10 @@ function createSwap()
    sudo sed -i 's/ResourceDisk.MountPoint=\/mnt\/resource/ResourceDisk.MountPoint=\/mnt/g' /etc/waagent.conf
    sudo sed -i 's/ResourceDisk.Format=n/ResourceDisk.Format=y/g' /etc/waagent.conf
    sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
-   sudo systemctl restart waagent.service | echo "Executing systemctl restart waagent.service" 
+   sudo systemctl restart waagent.service &
    sleep 5s
-   sleep 5s
-   if [ -f /mnt/swapfile ]; then
+   echo "Verifying swapfile is created"
+   if [ -f '/mnt/swapfile' ]; then
       echo "Swap partiftion created at /mnt/swapfile"
    else
       echo "Swap partition creation failed"
@@ -112,7 +112,7 @@ else
 swapon /mnt/swapfile; 
 fi
 EOF
-sudo chmod +x /var/lib/cloud/scripts/per-boot/create_swapfile.sh
+   sudo chmod +x /var/lib/cloud/scripts/per-boot/create_swapfile.sh
 
 #   sudo dd if=/dev/zero of=/u01/swapfile bs=2M count=1024
 #   sudo mkswap /u01/swapfile
