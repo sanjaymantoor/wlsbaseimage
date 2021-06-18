@@ -96,6 +96,20 @@ function createSwap()
       echo "Swap partition creation failed"
       exit 1
    fi
+   
+   echo "Adding create_swapfile.sh to /var/lib/cloud/scripts/per-boot"
+   sudo cat <<EOF >/var/lib/cloud/scripts/per-boot/create_swapfile.sh
+#!/bin/sh
+if [ ! -f '/mnt/swapfile' ]; then
+fallocate --length 2GiB /mnt/swapfile 
+chmod 600 /mnt/swapfile
+mkswap /mnt/swapfile
+swapon /mnt/swapfile
+swapon -a 
+else
+swapon /mnt/swapfile; 
+fi
+EOF
 #   sudo dd if=/dev/zero of=/u01/swapfile bs=2M count=1024
 #   sudo mkswap /u01/swapfile
 #   sudo swapon /u01/swapfile
