@@ -85,20 +85,28 @@ function mountDataDisk()
 function createSwap()
 {
    echo "Creating swapfile using waagent service"
-   sudo cp /etc/waagent.conf /etc/waagent.conf.backup
-   sudo sed -i 's/ResourceDisk.MountPoint=\/mnt\/resource/ResourceDisk.MountPoint=\/mnt/g' /etc/waagent.conf
-   sudo sed -i 's/ResourceDisk.Format=n/ResourceDisk.Format=y/g' /etc/waagent.conf
-   sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
+   #sudo cp /etc/waagent.conf /etc/waagent.conf.backup
+   #sudo sed -i 's/ResourceDisk.MountPoint=\/mnt\/resource/ResourceDisk.MountPoint=\/mnt/g' /etc/waagent.conf
+   #sudo sed -i 's/ResourceDisk.Format=n/ResourceDisk.Format=y/g' /etc/waagent.conf
+   #sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
    #sudo systemctl restart waagent.service &
-   sudo ps -ef|grep '/usr/sbin/waagent' | grep -v grep | awk '{print $2}' | xargs kill -9 $1
-   sleep 10s
-   echo "Verifying swapfile is created"
-   if [ -f '/mnt/swapfile' ]; then
-      echo "Swap partiftion created at /mnt/swapfile"
-   else
-      echo "Swap partition creation failed"
-      exit 1
-   fi
+   #sudo ps -ef|grep '/usr/sbin/waagent' | grep -v grep | awk '{print $2}' | xargs kill -9 $1
+   #sleep 10s
+   #echo "Verifying swapfile is created"
+   #if [ -f '/mnt/swapfile' ]; then
+   #   echo "Swap partiftion created at /mnt/swapfile"
+   #else
+   #   echo "Swap partition creation failed"
+   #   exit 1
+   #fi
+   
+   sudo dd if=/dev/zero of=/mnt/swapfile bs=2M count=1024
+   sudo mkswap /mnt/swapfile 
+   sudo swapon /mnt/swapfile 
+   sudo chmod 0600 /mnt/swapfile 
+#   echo "Make a entry in /etc/fstab for swapfile"
+#   echo "/u01/swapfile swap swap defaults 0 0" >> /etc/fstab 
+
    
    echo "Adding create_swapfile.sh to /var/lib/cloud/scripts/per-boot"
    sudo cat <<EOF >/var/lib/cloud/scripts/per-boot/create_swapfile.sh
@@ -114,13 +122,6 @@ swapon /mnt/swapfile;
 fi
 EOF
    sudo chmod +x /var/lib/cloud/scripts/per-boot/create_swapfile.sh
-
-#   sudo dd if=/dev/zero of=/u01/swapfile bs=2M count=1024
-#   sudo mkswap /u01/swapfile
-#   sudo swapon /u01/swapfile
-#   sudo chmod 0600 /u01/swapfile
-#   echo "Make a entry in /etc/fstab for swapfile"
-#   echo "/u01/swapfile swap swap defaults 0 0" >> /etc/fstab 
 }
 
 #download 3rd Party JDBC Drivers
