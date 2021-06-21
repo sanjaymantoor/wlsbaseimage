@@ -48,7 +48,7 @@ function resizeDisk()
    echo "File system name : $fileSystemName"
    echo "File system number : $fileSystemNumber"
    sudo df -h ${volume}
-   sudo growpart $fileSystemName $fileSystemNumber
+   sudo growpart $fileSystemName $fileSystemNumber --fudge 2048
    sudo lsblk ${partition}
    sudo lvextend -An -L+8G --resizefs $volume
    sudo pvresize ${partition}
