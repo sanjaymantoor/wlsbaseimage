@@ -91,7 +91,7 @@ function createSwap()
    sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
    #sudo systemctl restart waagent.service &
    sudo ps -ef|grep '/usr/sbin/waagent' | grep -v grep | awk '{print $2}' | xargs kill -9 $1
-   sleep 5s
+   sleep 10s
    echo "Verifying swapfile is created"
    if [ -f '/mnt/swapfile' ]; then
       echo "Swap partiftion created at /mnt/swapfile"
