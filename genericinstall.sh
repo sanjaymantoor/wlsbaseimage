@@ -420,14 +420,13 @@ if [ "$diskSize" -lt "$rootDiskSizeLimit" ]; then
    resizeDisk
 fi
 
+exit 0
 # mount the data disk for JDK and WLS setup
 # This has to run first as data disk is mounted /u01 directory
 #mountDataDisk
 
 # Create swap file, which is required for WLS installation
 createSwap
-
-
 
 export WLS_VER=$wlsversion
 export WEBLOGIC_DEPLOY_TOOL=https://github.com/oracle/weblogic-deploy-tooling/releases/download/weblogic-deploy-tooling-1.8.1/weblogic-deploy.zip
