@@ -421,7 +421,6 @@ if [ "$diskSize" -lt "$rootDiskSizeLimit" ]; then
    resizeDisk
 fi
 
-exit 0
 # mount the data disk for JDK and WLS setup
 # This has to run first as data disk is mounted /u01 directory
 #mountDataDisk
