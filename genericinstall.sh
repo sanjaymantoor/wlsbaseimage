@@ -92,7 +92,11 @@ function createSwap()
    #sudo sed -i 's/# Logs.Console=y/Logs.Console=n/g' /etc/waagent.conf
    #sudo systemctl restart waagent.service &
    #sudo ps -ef|grep '/usr/sbin/waagent' | grep -v grep | awk '{print $2}' | xargs kill -9 $1
-   sleep 5s
+   #sleep 5s
+   sudo dd if=/dev/zero of=/mnt/swapfile bs=2M count=1024
+   sudo mkswap /mnt/swapfile 
+   sudo swapon /mnt/swapfile 
+   sudo chmod 0600 /mnt/swapfile 
    echo "Verifying swapfile is created"
    if [ -f '/mnt/swapfile' ]; then
       echo "Swap partiftion created at /mnt/swapfile"
@@ -101,10 +105,6 @@ function createSwap()
       exit 1
    fi
    
-   sudo dd if=/dev/zero of=/mnt/swapfile bs=2M count=1024
-   sudo mkswap /mnt/swapfile 
-   sudo swapon /mnt/swapfile 
-   sudo chmod 0600 /mnt/swapfile 
 #   echo "Make a entry in /etc/fstab for swapfile"
 #   echo "/u01/swapfile swap swap defaults 0 0" >> /etc/fstab 
 
