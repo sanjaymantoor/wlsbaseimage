@@ -84,31 +84,7 @@ function mountDataDisk()
 #This function is to create swapfile required for WebLogic installation
 function createSwap()
 {
-   echo "Creating swapfile using waagent service"
-   sudo cp /etc/waagent.conf /etc/waagent.conf.backup
-   sudo sed -i 's/ResourceDisk.MountPoint=\/mnt\/resource/ResourceDisk.MountPoint=\/mnt/g' /etc/waagent.conf
-   sudo sed -i 's/ResourceDisk.Format=n/ResourceDisk.Format=y/g' /etc/waagent.conf
-   sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
-   #sudo sed -i 's/# Logs.Console=y/Logs.Console=n/g' /etc/waagent.conf
-   #sudo systemctl restart waagent.service &
-   #sudo ps -ef|grep '/usr/sbin/waagent' | grep -v grep | awk '{print $2}' | xargs kill -9 $1
-   #sleep 5s
-   sudo dd if=/dev/zero of=/mnt/swapfile bs=2M count=1024
-   sudo mkswap /mnt/swapfile 
-   sudo swapon /mnt/swapfile 
-   sudo chmod 0600 /mnt/swapfile 
-   echo "Verifying swapfile is created"
-   if [ -f '/mnt/swapfile' ]; then
-      echo "Swap partiftion created at /mnt/swapfile"
-   else
-      echo "Swap partition creation failed"
-      exit 1
-   fi
-   
-#   echo "Make a entry in /etc/fstab for swapfile"
-#   echo "/u01/swapfile swap swap defaults 0 0" >> /etc/fstab 
-
-   
+   echo "Creating swapfile using cloud-init script"
    echo "Adding create_swapfile.sh to /var/lib/cloud/scripts/per-boot"
    sudo cat <<EOF >/var/lib/cloud/scripts/per-boot/create_swapfile.sh
 #!/bin/sh
@@ -123,6 +99,15 @@ swapon /mnt/swapfile;
 fi
 EOF
    sudo chmod +x /var/lib/cloud/scripts/per-boot/create_swapfile.sh
+   /bin/sh /var/lib/cloud/scripts/per-boot/create_swapfile.sh
+   sleep 5s
+   echo "Verifying swapfile is created"
+   if [ -f '/mnt/swapfile' ]; then
+      echo "Swap partiftion created at /mnt/swapfile"
+   else
+      echo "Swap partition creation failed"
+      exit 1
+   fi
 }
 
 #download 3rd Party JDBC Drivers
