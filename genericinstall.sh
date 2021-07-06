@@ -50,7 +50,7 @@ function resizeDisk()
    sudo df -h ${volume}
    sudo growpart $fileSystemName $fileSystemNumber --fudge 2048 | true
    sudo lsblk ${partition}
-   sudo lvextend -An -L+30G --resizefs $volume
+   sudo lvextend -An -L+28G --resizefs $volume
    sudo pvresize ${partition}
    echo "After resizing $volume size"
    sudo df -Th ${volume}
