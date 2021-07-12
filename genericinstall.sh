@@ -414,12 +414,6 @@ if [ "$diskSize" -lt "$rootDiskSizeLimit" ]; then
    resizeDisk
 fi
 
-# mount the data disk for JDK and WLS setup
-# This has to run first as data disk is mounted /u01 directory
-#mountDataDisk
-
-# Create swap file, which is required for WLS installation
-createSwap
 
 export WLS_VER=$wlsversion
 export WEBLOGIC_DEPLOY_TOOL=https://github.com/oracle/weblogic-deploy-tooling/releases/download/weblogic-deploy-tooling-1.8.1/weblogic-deploy.zip
@@ -428,7 +422,17 @@ export POSTGRESQL_JDBC_DRIVER=${POSTGRESQL_JDBC_DRIVER_URL##*/}
 
 export MSSQL_JDBC_DRIVER_URL=https://repo.maven.apache.org/maven2/com/microsoft/sqlserver/mssql-jdbc/7.4.1.jre8/mssql-jdbc-7.4.1.jre8.jar
 export MSSQL_JDBC_DRIVER=${MSSQL_JDBC_DRIVER_URL##*/}
-export SWAP_FILE="/mnt/resource/swapfile"
+export SWAP_FILE_DIR="/mnt/resource"
+export SWAP_FILE="$SWAP_FILE_DIR/swapfile"
+
+
+# mount the data disk for JDK and WLS setup
+# This has to run first as data disk is mounted /u01 directory
+#mountDataDisk
+
+
+# Create swap file, which is required for WLS installation
+createSwap
 
 #add oracle group and user
 echo "Adding oracle user and group..."
