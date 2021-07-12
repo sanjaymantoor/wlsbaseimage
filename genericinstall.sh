@@ -114,7 +114,7 @@ function createSwapWithWALinux()
 {
    echo "Creating swapfile using waagent service"
    sudo cp /etc/waagent.conf /etc/waagent.conf.backup
-   #sudo sed -i 's/ResourceDisk.MountPoint=\/mnt\/resource/ResourceDisk.MountPoint=\/mnt/g' /etc/waagent.conf
+   sudo sed -i 's/ResourceDisk.MountPoint=\/mnt\/resource/ResourceDisk.MountPoint=$SWAP_FILE_DIR/g' /etc/waagent.conf
    sudo sed -i 's/ResourceDisk.Format=n/ResourceDisk.Format=y/g' /etc/waagent.conf
    sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
 }
@@ -387,7 +387,7 @@ export POSTGRESQL_JDBC_DRIVER=${POSTGRESQL_JDBC_DRIVER_URL##*/}
 
 export MSSQL_JDBC_DRIVER_URL=https://repo.maven.apache.org/maven2/com/microsoft/sqlserver/mssql-jdbc/7.4.1.jre8/mssql-jdbc-7.4.1.jre8.jar
 export MSSQL_JDBC_DRIVER=${MSSQL_JDBC_DRIVER_URL##*/}
-export SWAP_FILE_DIR="/mnt/resource"
+export SWAP_FILE_DIR="/mnt"
 export SWAP_FILE="$SWAP_FILE_DIR/swapfile"
 
 
@@ -581,4 +581,3 @@ echo "start waagent.service using command 'sudo systemctl restart waagent.servic
 #sudo yum upgrade -y --disablerepo=ol7_latest --enablerepo=ol7_u3_base
 
 #sudo reboot
-
