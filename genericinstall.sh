@@ -93,10 +93,11 @@ function createSwap()
    sudo mkswap $SWAP_FILE
    sudo swapon $SWAP_FILE
    sudo swapon -a
+   sudo swapon -s
    sleep 5s
    echo "Verifying swapfile is created"
    if [ -f $SWAP_FILE ]; then
-      echo "Swap partiftion created at $SWAP_FILE"
+      echo "Swap partition created at $SWAP_FILE"
    else
       echo "Swap partition creation failed"
       exit 1
@@ -378,6 +379,17 @@ export jdkurl="$5"
 export wlsversion="$6"
 export jdkversion="$7"
 export linuxversion="$8"
+export WLS_VER=$wlsversion
+export WEBLOGIC_DEPLOY_TOOL=https://github.com/oracle/weblogic-deploy-tooling/releases/download/weblogic-deploy-tooling-1.8.1/weblogic-deploy.zip
+export POSTGRESQL_JDBC_DRIVER_URL=https://jdbc.postgresql.org/download/postgresql-42.2.8.jar 
+export POSTGRESQL_JDBC_DRIVER=${POSTGRESQL_JDBC_DRIVER_URL##*/}
+
+export MSSQL_JDBC_DRIVER_URL=https://repo.maven.apache.org/maven2/com/microsoft/sqlserver/mssql-jdbc/7.4.1.jre8/mssql-jdbc-7.4.1.jre8.jar
+export MSSQL_JDBC_DRIVER=${MSSQL_JDBC_DRIVER_URL##*/}
+export SWAP_FILE_DIR="/mnt/resource"
+export SWAP_FILE="$SWAP_FILE_DIR/swapfile"
+
+
 # Resize the disk if / disk space is less than rootDiskSizeLimit
 export rootDiskSizeLimit="6"
 
@@ -413,17 +425,6 @@ if [ "$diskSize" -lt "$rootDiskSizeLimit" ]; then
    echo "'/' file system has less space $diskSize GB , attempting for resizing"
    resizeDisk
 fi
-
-
-export WLS_VER=$wlsversion
-export WEBLOGIC_DEPLOY_TOOL=https://github.com/oracle/weblogic-deploy-tooling/releases/download/weblogic-deploy-tooling-1.8.1/weblogic-deploy.zip
-export POSTGRESQL_JDBC_DRIVER_URL=https://jdbc.postgresql.org/download/postgresql-42.2.8.jar 
-export POSTGRESQL_JDBC_DRIVER=${POSTGRESQL_JDBC_DRIVER_URL##*/}
-
-export MSSQL_JDBC_DRIVER_URL=https://repo.maven.apache.org/maven2/com/microsoft/sqlserver/mssql-jdbc/7.4.1.jre8/mssql-jdbc-7.4.1.jre8.jar
-export MSSQL_JDBC_DRIVER=${MSSQL_JDBC_DRIVER_URL##*/}
-export SWAP_FILE_DIR="/mnt/resource"
-export SWAP_FILE="$SWAP_FILE_DIR/swapfile"
 
 
 # mount the data disk for JDK and WLS setup
@@ -568,7 +569,8 @@ createSwapWithWALinux
 
 #Disable swap created as it will be enabled by WALinux agent after reboot
 echo "Removing swap $SWAP_FILE"
-swapoff $SWAP_FILE
+sudo swapoff $SWAP_FILE
+sudo swapon -s
 
 echo "Weblogic Server Installation Completed succesfully."
 
