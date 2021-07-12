@@ -86,8 +86,8 @@ function mountDataDisk()
 # via 
 function createSwap()
 {
-   echo "Creating swapfile for WLS installation"
-   sudo mkdir -p $SWAP_FILE
+   echo "Creating swapfile $SWAP_FILE for WLS installation"
+   sudo mkdir -p $SWAP_FILE_DIR
    sudo fallocate --length 2GiB $SWAP_FILE
    sudo chmod 600 $SWAP_FILE
    sudo mkswap $SWAP_FILE
@@ -95,8 +95,8 @@ function createSwap()
    sudo swapon -a
    sleep 5s
    echo "Verifying swapfile is created"
-   if [ -f '/mnt/swapfile' ]; then
-      echo "Swap partiftion created at /mnt/swapfile"
+   if [ -f $SWAP_FILE ]; then
+      echo "Swap partiftion created at $SWAP_FILE"
    else
       echo "Swap partition creation failed"
       exit 1
