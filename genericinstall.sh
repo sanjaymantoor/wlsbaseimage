@@ -82,24 +82,17 @@ function mountDataDisk()
 }
 
 #This function is to create swapfile required for WebLogic installation
+# This is temporary swap to be created for WLS but for permanent it needs to be created
+# via 
 function createSwap()
 {
-   echo "Creating swapfile using cloud-init script"
-   echo "Adding create_swapfile.sh to /var/lib/cloud/scripts/per-boot"
-   sudo cat <<EOF >/var/lib/cloud/scripts/per-boot/create_swapfile.sh
-#!/bin/sh
-if [ ! -f '/mnt/swapfile' ]; then
-fallocate --length 2GiB /mnt/swapfile 
-chmod 600 /mnt/swapfile
-mkswap /mnt/swapfile
-swapon /mnt/swapfile
-swapon -a 
-else
-swapon /mnt/swapfile; 
-fi
-EOF
-   sudo chmod +x /var/lib/cloud/scripts/per-boot/create_swapfile.sh
-   /bin/sh /var/lib/cloud/scripts/per-boot/create_swapfile.sh
+   echo "Creating swapfile for WLS installation"
+   sudo mkdir -p $SWAP_FILE
+   sudo fallocate --length 2GiB $SWAP_FILE
+   sudo chmod 600 $SWAP_FILE
+   sudo mkswap $SWAP_FILE
+   sudo swapon $SWAP_FILE
+   sudo swapon -a
    sleep 5s
    echo "Verifying swapfile is created"
    if [ -f '/mnt/swapfile' ]; then
@@ -109,6 +102,21 @@ EOF
       exit 1
    fi
 }
+
+
+#This function to enable swap partiftion using WALinux Agent
+#createSwap function will enable temporarily partition for WLS installation, but that causes Azure certification to fail
+# saying swap partition is not allowed. Hence before creating base image it needs to be swapoff and then use WALinux agent
+# configuration. 
+# WALinux agent requires manual restart. Restart can't be done as part of deployment , as it causes deployment to run forever
+function createSwapWithWALinux()
+{
+   echo "Creating swapfile using waagent service"
+   sudo cp /etc/waagent.conf /etc/waagent.conf.backup
+   sudo sed -i 's/ResourceDisk.Format=n/ResourceDisk.Format=y/g' /etc/waagent.conf
+   sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
+}
+
 
 #download 3rd Party JDBC Drivers
 function downloadJDBCDrivers()
@@ -420,6 +428,7 @@ export POSTGRESQL_JDBC_DRIVER=${POSTGRESQL_JDBC_DRIVER_URL##*/}
 
 export MSSQL_JDBC_DRIVER_URL=https://repo.maven.apache.org/maven2/com/microsoft/sqlserver/mssql-jdbc/7.4.1.jre8/mssql-jdbc-7.4.1.jre8.jar
 export MSSQL_JDBC_DRIVER=${MSSQL_JDBC_DRIVER_URL##*/}
+export SWAP_FILE="/mnt/resource/swapfile"
 
 #add oracle group and user
 echo "Adding oracle user and group..."
@@ -551,7 +560,16 @@ modifyWLSClasspath
 
 cleanup
 
+createSwapWithWALinux
+
+#Disable swap created as it will be enabled by WALinux agent after reboot
+echo "Removing swap $SWAP_FILE"
+swapoff $SWAP_FILE
+
 echo "Weblogic Server Installation Completed succesfully."
+
+echo "Post operations to do during base image creation"
+echo "start waagent.service using command 'sudo systemctl restart waagent.service'"
 
 #sudo yum upgrade -y --disablerepo=ol7_latest --enablerepo=ol7_u3_base
 
