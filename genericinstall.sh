@@ -82,16 +82,15 @@ function mountDataDisk()
 }
 
 #This function is to create swapfile required for WebLogic installation
-# This is temporary swap to be created for WLS but for permanent it needs to be created
-# via 
+# This is temporary swap to be created for WLS but for permanent it needs to be created using createSwapWithWALinux
 function createSwap()
 {
 
-   if [ "$linuxversion" == "7.3" ]
+   #Check if already swap is present
+   swapfile=`swapon -s | tail -1 | awk '{print $1}'`
+   if [ -z $swapfile ]
    then
-   	echo "Already swap is present"
-   else
-   	echo "Creating swapfile $SWAP_FILE for WLS installation"
+  	echo "Creating swapfile $SWAP_FILE for WLS installation"
    	sudo mkdir -p $SWAP_FILE_DIR
    	sudo fallocate --length 2GiB $SWAP_FILE
    	sudo chmod 600 $SWAP_FILE
@@ -99,7 +98,7 @@ function createSwap()
    	sudo swapon $SWAP_FILE
    	sudo swapon -a
    	sudo swapon -s
-   	sleep 5s
+   	sleep 2s
    	echo "Verifying swapfile is created"
    	if [ -f $SWAP_FILE ]; then
       		echo "Swap partition created at $SWAP_FILE"
@@ -107,6 +106,10 @@ function createSwap()
       		echo "Swap partition creation failed"
       		exit 1
    	fi
+	createSwapWithWALinux
+   else
+   	echo "Swap already exists $swapfile"
+	sudo swapon -s
    fi
 }
 
@@ -118,16 +121,11 @@ function createSwap()
 # WALinux agent requires manual restart. Restart can't be done as part of deployment , as it causes deployment to run forever
 function createSwapWithWALinux()
 {
-   if [ "$linuxversion" == "7.3" ]
-   then
-   	echo "Already swap is configured"
-   else
-   	echo "Creating swapfile using waagent service"
-   	sudo cp /etc/waagent.conf /etc/waagent.conf.backup
-   	sudo sed -i 's,ResourceDisk.MountPoint=\/mnt\/resource,ResourceDisk.MountPoint='"$SWAP_FILE_DIR"',' /etc/waagent.conf
-   	sudo sed -i 's/ResourceDisk.Format=n/ResourceDisk.Format=y/g' /etc/waagent.conf
-   	sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
-  fi
+   echo "Creating swapfile using waagent service"
+   sudo cp /etc/waagent.conf /etc/waagent.conf.backup
+   sudo sed -i 's,ResourceDisk.MountPoint=\/mnt\/resource,ResourceDisk.MountPoint='"$SWAP_FILE_DIR"',' /etc/waagent.conf
+   sudo sed -i 's/ResourceDisk.Format=n/ResourceDisk.Format=y/g' /etc/waagent.conf
+   sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
 }
 
 
@@ -576,8 +574,6 @@ copyJDBCDriversToWeblogicClassPath
 modifyWLSClasspath
 
 cleanup
-
-createSwapWithWALinux
 
 #Disable swap created as it will be enabled by WALinux agent after reboot
 echo "Removing swap $SWAP_FILE"
