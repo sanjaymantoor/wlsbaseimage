@@ -100,13 +100,13 @@ function createSwap()
    	sudo swapon -a
    	sudo swapon -s
    	sleep 5s
-   fi
-   echo "Verifying swapfile is created"
-   if [ -f $SWAP_FILE ]; then
-      echo "Swap partition created at $SWAP_FILE"
-   else
-      echo "Swap partition creation failed"
-      exit 1
+   	echo "Verifying swapfile is created"
+   	if [ -f $SWAP_FILE ]; then
+      		echo "Swap partition created at $SWAP_FILE"
+   	else
+      		echo "Swap partition creation failed"
+      		exit 1
+   	fi
    fi
 }
 
