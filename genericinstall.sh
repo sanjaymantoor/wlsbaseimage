@@ -114,7 +114,7 @@ function createSwapWithWALinux()
 {
    echo "Creating swapfile using waagent service"
    sudo cp /etc/waagent.conf /etc/waagent.conf.backup
-   sudo sed -i "s/ResourceDisk.MountPoint=\/mnt\/resource/ResourceDisk.MountPoint=$SWAP_FILE_DIR/g" /etc/waagent.conf
+   sudo sed -i 's,ResourceDisk.MountPoint=\/mnt\/resource,ResourceDisk.MountPoint='"$SWAP_FILE_DIR"',' /etc/waagent.conf
    sudo sed -i 's/ResourceDisk.Format=n/ResourceDisk.Format=y/g' /etc/waagent.conf
    sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
 }
