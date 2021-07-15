@@ -396,7 +396,7 @@ export POSTGRESQL_JDBC_DRIVER=${POSTGRESQL_JDBC_DRIVER_URL##*/}
 
 export MSSQL_JDBC_DRIVER_URL=https://repo.maven.apache.org/maven2/com/microsoft/sqlserver/mssql-jdbc/7.4.1.jre8/mssql-jdbc-7.4.1.jre8.jar
 export MSSQL_JDBC_DRIVER=${MSSQL_JDBC_DRIVER_URL##*/}
-export SWAP_FILE_DIR="/mnt"
+export SWAP_FILE_DIR="/mnt/resource"
 export SWAP_FILE="$SWAP_FILE_DIR/swapfile"
 
 
