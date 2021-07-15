@@ -86,15 +86,21 @@ function mountDataDisk()
 # via 
 function createSwap()
 {
-   echo "Creating swapfile $SWAP_FILE for WLS installation"
-   sudo mkdir -p $SWAP_FILE_DIR
-   sudo fallocate --length 2GiB $SWAP_FILE
-   sudo chmod 600 $SWAP_FILE
-   sudo mkswap $SWAP_FILE
-   sudo swapon $SWAP_FILE
-   sudo swapon -a
-   sudo swapon -s
-   sleep 5s
+
+   if [ "$linuxversion" == "7.3" ]
+   then
+   	echo "Already swap is present"
+   else
+   	echo "Creating swapfile $SWAP_FILE for WLS installation"
+   	sudo mkdir -p $SWAP_FILE_DIR
+   	sudo fallocate --length 2GiB $SWAP_FILE
+   	sudo chmod 600 $SWAP_FILE
+   	sudo mkswap $SWAP_FILE
+   	sudo swapon $SWAP_FILE
+   	sudo swapon -a
+   	sudo swapon -s
+   	sleep 5s
+   fi
    echo "Verifying swapfile is created"
    if [ -f $SWAP_FILE ]; then
       echo "Swap partition created at $SWAP_FILE"
@@ -112,11 +118,16 @@ function createSwap()
 # WALinux agent requires manual restart. Restart can't be done as part of deployment , as it causes deployment to run forever
 function createSwapWithWALinux()
 {
-   echo "Creating swapfile using waagent service"
-   sudo cp /etc/waagent.conf /etc/waagent.conf.backup
-   sudo sed -i 's,ResourceDisk.MountPoint=\/mnt\/resource,ResourceDisk.MountPoint='"$SWAP_FILE_DIR"',' /etc/waagent.conf
-   sudo sed -i 's/ResourceDisk.Format=n/ResourceDisk.Format=y/g' /etc/waagent.conf
-   sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
+   if [ "$linuxversion" == "7.3" ]
+   then
+   	echo "Already swap is configured"
+   else
+   	echo "Creating swapfile using waagent service"
+   	sudo cp /etc/waagent.conf /etc/waagent.conf.backup
+   	sudo sed -i 's,ResourceDisk.MountPoint=\/mnt\/resource,ResourceDisk.MountPoint='"$SWAP_FILE_DIR"',' /etc/waagent.conf
+   	sudo sed -i 's/ResourceDisk.Format=n/ResourceDisk.Format=y/g' /etc/waagent.conf
+   	sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
+  fi
 }
 
 
