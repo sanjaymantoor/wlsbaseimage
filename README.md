@@ -1,3 +1,8 @@
+<!--
+Copyright (c) 2021, Oracle and/or its affiliates.
+Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+-->
+
 # Deployment of Red Hat Enterprise Linux VM (RHEL 7.2 or RHEL 6.7)
 
 <IMG SRC="https://azurequickstartsservice.blob.core.windows.net/badges/101-vm-simple-rhel-unmanaged/PublicLastTestDate.svg" />&nbsp;
