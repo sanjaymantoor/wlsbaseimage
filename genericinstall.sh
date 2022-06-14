@@ -211,7 +211,7 @@ function testJDBCDrivers()
 	
 	ls /u01/app/wls/install/oracle/middleware/oracle_home/wlserver/server/lib/mssql-jdbc-10.2.1.jre8.jar
 	if [[ $? != 0 ]]; then
-   		echo Downloading mssql-jdbc-10.2.1.jre8.jarr failed
+   		echo Downloading mssql-jdbc-10.2.1.jre8.jar failed
    		exit 1
 	fi
 }
