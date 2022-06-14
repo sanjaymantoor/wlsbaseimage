@@ -134,7 +134,7 @@
       },
       "vmSizeSelect":{
          "type":"string",
-         "defaultValue":"Standard_D2as_v4",
+         "defaultValue":"Standard_B2ms",
          "type": "string",
          "metadata":{
             "description":"Select appropriate VM Size as per requirement"
