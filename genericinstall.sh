@@ -174,7 +174,8 @@ function downloadUsingWget()
    filename=${downloadURL##*/}
    for in in {1..5}
    do
-     wget $downloadURL
+     echo wget --no-check-certificate $downloadURL
+     wget --no-check-certificate $downloadURL
      if [ $? != 0 ];
      then
         echo "$filename Driver Download failed on $downloadURL. Trying again..."
